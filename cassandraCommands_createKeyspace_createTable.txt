@@ -1,0 +1,5 @@
+CREATE KEYSPACE production WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 } AND durable_writes = 'true';
+use production;
+CREATE TABLE pedigree (id int PRIMARY KEY,main_key text, gen text, line text, location text, sire text, sire_gen text, sire_line text, dam text, dam_gen text, dam_line text);
+
+INSERT INTO pedigree (id ,main_key , gen , line , location , sire , sire_gen, sire_line, dam, dam_gen, dam_line) VALUES (1, '02024WS4567', '2024W', 'S', 'mexicoFarm', '02023TS7654', '2024T', 'S', '02023TS4321', '2024T', 'S');
