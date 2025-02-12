@@ -1,0 +1,42 @@
+install.packages('shiny')
+install.packages('devtools')
+
+devtools::install_github('rstudio/DT')
+
+
+
+sudo apt install openjdk-8-jre-headless
+apt install gedit
+sudo apt install gedit
+apt install python3.12-venv
+sudo apt install python3.12-venv
+sudo apt install git
+sudo apt-get install openjdk-8-jre openjdk-8-jdk
+sudo apt-get install openjdk-8-jre openjdk-8-jdk
+sudo apt install libtirpc-dev
+sudo apt install r-cran-rjava
+sudo apt install unixodbc-dev
+sudo apt install unixodbc
+sudo apt install unixodbc-common
+sudo apt install libnsl-dev
+sudo apt install libnsl2
+sudo apt install odbcinst
+sudo apt install mx
+sudo apt install mc
+
+sudo apt install libxml2-dev
+sudo apt install ibcurl4-gnutls-dev
+sudo apt install libcurl4-gnutls-dev
+sudo apt install libcurl4-openssl-dev
+sudo apt install libfontconfig-dev
+sudo apt install libfontconfig1-dev
+sudo apt install libharfbuzz-dev  libfribidi-dev
+sudo apt-get install libfreetype-dev libfreetype6 libfreetype6-dev
+apt install libfontconfig1-dev bzip2
+sudo apt install libfontconfig1-dev bzip2
+sudo apt install libfreetype-dev
+sudo apt install libfontconfig1-dev
+sudo apt install libharfbuzz-dev libfribidi-dev
+sudo apt install pkgconf
+sudo apt-get install libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
+
