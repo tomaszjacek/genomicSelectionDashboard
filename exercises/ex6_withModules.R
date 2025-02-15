@@ -5,35 +5,43 @@ library(magrittr)
 source("tools.R")
 
 column_ui <- function(id,name){
-
+  ns<-NS(id)
   wellPanel(
     id = id,
     modalDialogUI(
-      glue("{id}_modal"),
-      textInput(glue("{id}_name"), "Name",value = name),
-      textInput(glue("{id}_namee"), "Name",value = 'deupa'),
-      footer = actionButton(glue("{id}_confirm"), "Confirm", `data-dismiss`="modal")
-      ),
-      
-      actionButton(glue("{id}_delete"),NULL,icon("trash-alt")),
-      textOutput(glue("{id}_outname"), inline =TRUE)
-    )
-
+      ns("modal"),
+      textInput(ns("name"), "Name",value = name),
+      textInput(ns("namee"), "Name",value = 'deupa'),
+      footer = actionButton(ns("confirm"), "Confirm", `data-dismiss`="modal")
+    ),
+    
+    actionButton(ns("delete"),NULL,icon("trash-alt")),
+    textOutput(ns("outname"), inline =TRUE)
+  )
+  
 }
 
-column_server <- function(id,input,output,session){
-  observeEvent(input[[glue("{id}_delete")]], {
-    removeUI(selector = glue("#{id}"))
-  })
+column_server <- function(id){
   
-  observeEvent(input[[glue("{id}_confirm")]],{
-    print("modal closed")
-  })
+  moduleServer(id, function(input, output, session) {
+    showModalUI("modal")
+    
+    observeEvent(input[["delete"]], {
+      removeUI(selector = glue("#{id}"))
+    })
   
-  output[[glue("{id}_outname")]] <- renderText({
-    input[[glue("{id}_name")]]
-  })
+    observeEvent(input[["confirm"]],{
+      print(reactiveValuesToList(input))
+      print("modal closed")
+      #updateTextInput(session,"name",value="")
+      tmp<- session$userData$modal_closed()
+      session$userData$modal_closed(tmp+1)
+    })
   
+    output[["outname"]] <- renderText({
+      input[["name"]]
+    })
+  })
 }
 
 ui<-fluidPage(
@@ -43,13 +51,10 @@ ui<-fluidPage(
       numericInput(inputId = "nrow", "Number of rows", value=50, min=1, max = 1000,step = 1),
       textOutput("number_facts"),
       div(id="variables"),
-      div(
-        id= "define-vars",
-        textInput("name", "Column name"),
-        conditionalPanel(
-          "input.name != ''",
-          actionButton("new",NULL,icon=icon("plus"),width="100%")
-        )
+      textInput("name", "Column name"),
+      conditionalPanel(
+        "input.name != ''",
+        actionButton("new",NULL,icon=icon("plus"),width="100%")
       ),
       conditionalPanel(
         "input.nrow>0 & $(#variables >div).length > 0",
@@ -66,30 +71,28 @@ ui<-fluidPage(
 
 server <-function(input,output,session){
   my_table<-reactiveVal(NULL)
-
+  session$userData$modal_closed <- reactiveVal(1)
+  
   observeEvent(input$new,{
     id<-genid()
     insertUI(
       "#variables",
       where = "beforeEnd",
-      column_ui(id,input$name),
+      ui = column_ui(id,input$name),
       immediate=TRUE
     )
-    column_server(id,input,output,session)
+    column_server(id)
   })
   
-  observeEvent(input$remove,{
-    removeUI(
-      selector = glue("#{input$which}"),
-    )
-  })
+   observeEvent(session$userData$modal_closed(),{
+     updateTextInput(session,inputId="name",value="")
+   })
   
   observeEvent(input$run, {
     if(identical(input$nrow>0,TRUE)){
       my_table(iris[1:input$nrow,])
     }else{
       my_table(NULL)
-      n_row(NULL)
     }
   }
   )
