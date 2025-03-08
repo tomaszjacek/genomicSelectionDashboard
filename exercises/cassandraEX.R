@@ -1,0 +1,24 @@
+
+
+library("DBI")
+#library("rJava")
+#library("RJDBC")
+library("RODBC")
+
+con <- DBI::dbConnect(odbc::odbc(),
+                      Driver   = "/usr/lib/libcassandraodbc_sb64.so",
+                      Host     = "127.0.0.1",
+                      Port     = 9042,
+                      Keyspace = "production",
+                      AuthMech = 1,
+                      UID = "cassandra",
+                      PWD = "cassandra"
+
+)
+
+data <- dbGetQuery(con, "SELECT * FROM production.pedigree LIMIT 10")
+print(data)odbc::sqlCreateTable(con,"eko",data)
+
+
+createTable<-"CREATE TABLE production.eko_sets(UUID UUID, GEN text, LINE text, WB float, LOCATION text, HATCH text, SIRE text, DAM text, FEATHER text, EQ_DATE date, SETNO float, LAYAGE float, ORIGIN text, SNP_FMO3 text, STATION text, MAIN_KEY text, DEFECTS text, PS float, E3 float, C3 float, Y3 float, BL float, MT float, EW float, YPCT float, EW1 float, EW2 float, EW3 float, CRACK float, KDYN float, KDYN1 float, KDYN2 float, KDYN3 float, BS float, BS1 float, BS2 float, BS3 float, BSPO float, BSPO1 float, BSPO2 float, BSPO3 float, AH float, AH1 float, AH2 float, AH3 float, CO float, CO1 float, CO2 float, CO3 float, YW float, YW1 float, YW2 float, YW3 float, SP float, SP1 float, SP2 float, SP3 float, PRIMARY KEY ((GEN,LINE),MAIN_KEY,UUID,LAYAGE));"
+

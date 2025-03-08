@@ -1,0 +1,7 @@
+UPDATE production.eq_sets SET SP3 = 0.55 WHERE gen = '2018K' and line ='V'  and LAYAGE = 147 and MAIN_KEY = '02018KV909' IF EXISTS;
+
+
+ Error from server: code=2200 [Invalid query] message="Some clustering keys are missing: uuid"
+
+
+
