@@ -4,6 +4,8 @@ library(glue)
 library(magrittr)
 source("tools.R")
 
+columnTypes <- c('ascii','bigint','blob','boolean','counter','date','decimal','double','duration','float','inet','int','smallint','text','time','timestamp','timeuuid','tinyint','uuid','varchar','varint')
+
 column_ui <- function(id,name){
 
   wellPanel(
@@ -11,7 +13,12 @@ column_ui <- function(id,name){
     modalDialogUI(
       glue("{id}_modal"),
       textInput(glue("{id}_name"), "Name",value = name),
-      textInput(glue("{id}_namee"), "Name",value = 'deupa'),
+      selectInput(
+        glue("{id}_type"),
+        label="removeType",
+        choices=columnTypes
+        
+      ),
       footer = actionButton(glue("{id}_confirm"), "Confirm", `data-dismiss`="modal")
       ),
       
