@@ -7,3 +7,6 @@ library(echarts4r)
 library(dplyr)
 library(tidyr)
 library(htmlwidgets)
+library(DT)
+library(shinycssloaders)
+
