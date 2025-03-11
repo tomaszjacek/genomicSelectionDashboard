@@ -1,4 +1,4 @@
-server <- function(id,globalData) {
+server <- function(id) {
   moduleServer(
     id,
     function(input,output,session){

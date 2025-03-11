@@ -41,44 +41,44 @@ column_server <- function(id,input,output,session){
   
 }
 server <- function(id) {
-  moduleServer(
-    id,
-function(input,output,session){
-  my_table<-reactiveVal(NULL)
+  moduleServer(id, function(input,output,session){
 
-  observeEvent(input$new,{
-    id<-genid()
-    insertUI(
-      "#variables",
-      where = "beforeEnd",
-      column_ui(id,input$name),
-      immediate=TRUE
-    )
-    column_server(id,input,output,session)
-  })
+    my_table<-reactiveVal(NULL)
+
+    observeEvent(input$new,{
+      id<-genid()
+      insertUI(
+        "#variables",
+         where = "beforeEnd",
+         column_ui(id,input$name),
+         immediate=TRUE
+      )
+      column_server(id,input,output,session)
+    })
   
-  observeEvent(input$remove,{
-    removeUI(
-      selector = glue("#{input$which}"),
-    )
-  })
+    observeEvent(input$remove,{
+      removeUI(
+        selector = glue("#{input$which}"),
+      )
+    })
   
-  observeEvent(input$run, {
-    if(identical(input$nrow>0,TRUE)){
-      my_table(iris[1:input$nrow,])
-    }else{
-      my_table(NULL)
-      n_row(NULL)
+    observeEvent(input$run, {
+      if(identical(input$nrow>0,TRUE)){
+        my_table(iris[1:input$nrow,])
+      }else{
+        my_table(NULL)
+        n_row(NULL)
+      }
     }
-  }
-  )
-  output$table <- DT::renderDataTable({
-    validate(need(!is.null(my_table()),message = "novaliddata"))
-    DT::datatable(
-      my_table(),
-      options=list(paging=TRUE,pageLength=10,searching=FALSE)
     )
-  })
+    
+    output$table <- DT::renderDataTable({
+      validate(need(!is.null(my_table()),message = "novaliddata"))
+      DT::datatable(
+        my_table(),
+        options=list(paging=TRUE,pageLength=10,searching=FALSE)
+      )
+    })
   
 }
 
