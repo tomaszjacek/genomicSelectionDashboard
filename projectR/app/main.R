@@ -1,7 +1,6 @@
 box::use(
   shinydashboard[dashboardHeader,dashboardSidebar,dashboardBody,dashboardPage,sidebarMenuOutput,tabItems,tabItem, renderMenu, menuItem,sidebarMenu],
-  shiny[bootstrapPage,reactiveVal, observeEvent,div, moduleServer, NS, renderUI, tags,
-        
+  shiny[bootstrapPage,reactiveVal, observeEvent,div, moduleServer, NS, renderUI, tags, renderText,
         uiOutput,sidebarLayout,sidebarPanel,h3,numericInput,textOutput,textInput,conditionalPanel,actionButton,icon,mainPanel],
 )
 
@@ -14,7 +13,9 @@ box::use(
 
 #' @export
 ui <- function(id) {
+  ns<-NS(id)
   dashboardPage(
+
     dashboardHeader(title = "Dynamic sidebar"),
     dashboardSidebar(#sidebarMenuOutput("menu")),
     sidebarMenu(id = "tabs",
@@ -30,32 +31,39 @@ ui <- function(id) {
                 )
     )),
     dashboardBody(
+
       tabItems(
-        tabItem(tabName = "tab_cassandra", cassandra_panel_Ui$ui("cassandra_panel")),
+        tabItem(tabName = "tab_cassandra", cassandra_panel_Ui$ui(ns("cassandra_panel"))),
         tabItem(tabName = "tab_git", git_panel_Ui$ui("git")
       )
 
      )
+     
 
   )
   )
 }
+
+
 #' @export
 server <- function(id) {
   moduleServer(id, function(input, output, session) {
+    
+    #ns <- session$ns
+    
   # Function to load settings from file
-  active_modules <- reactiveVal(value = NULL)
+  #active_modules <- reactiveVal(value = NULL)
   
   #globalData <- callModule(globalVariablesModule, "globals")
   
   globalData<-NULL
   
-  observeEvent(input$tabs,{
-    if(input$tabs=="tab_cassandra"){
+  #observeEvent(input$tabs,{
+    #if(input$tabs=="tab_cassandra"){
       cassandra_panel_Server$server(id = "cassandra_panel")
-      active_modules(c("cassandra_panel", active_modules()))
-    }
-  }, ignoreNULL = TRUE, ignoreInit = TRUE)
+      #active_modules(c("cassandra_panel", active_modules()))
+    #}
+  #}, ignoreNULL = TRUE, ignoreInit = TRUE)
 
 
   
@@ -63,7 +71,7 @@ server <- function(id) {
   observeEvent(input$tabs,{
     if(input$tabs=="tab_git"){
       git_panel_Server$server(id = "git",globalData)
-      active_modules(c("git", active_modules()))
+      #active_modules(c("git", active_modules()))
     }
   }, ignoreNULL = TRUE, ignoreInit = TRUE)
 

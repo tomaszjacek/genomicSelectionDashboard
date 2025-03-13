@@ -9,4 +9,5 @@ library(tidyr)
 library(htmlwidgets)
 library(DT)
 library(shinycssloaders)
-
+library(shinyGizmo)
+library(glue)

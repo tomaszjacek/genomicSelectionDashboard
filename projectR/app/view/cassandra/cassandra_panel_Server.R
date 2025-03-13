@@ -4,56 +4,37 @@
 # library(magrittr)
 # source("tools.R")
 
-column_ui <- function(id,name){
-  
-  wellPanel(
-    id = id,
-    modalDialogUI(
-      glue("{id}_modal"),
-      textInput(glue("{id}_name"), "Name",value = name),
-      selectInput(
-        glue("{id}_type"),
-        label="removeType",
-        choices=columnTypes
-        
-      ),
-      footer = actionButton(glue("{id}_confirm"), "Confirm", `data-dismiss`="modal")
-    ),
-    
-    actionButton(glue("{id}_delete"),NULL,icon("trash-alt")),
-    textOutput(glue("{id}_outname"), inline =TRUE)
-  )
-  
-}
+box::use(
+  shinydashboard[dashboardHeader,dashboardSidebar,dashboardBody,dashboardPage,sidebarMenuOutput,tabItems,tabItem, renderMenu, menuItem,sidebarMenu],
+  shiny[bootstrapPage,reactiveVal, observeEvent,div, moduleServer, NS, renderUI, tags, insertUI,wellPanel,selectInput,renderText,validate,need,fluidPage,removeUI,
+        uiOutput,sidebarLayout,sidebarPanel,h3,numericInput,textOutput,textInput,conditionalPanel,actionButton,icon,mainPanel],
+  shinyGizmo[modalDialogUI],
+  glue[...]
+)
+box::use(
+  app/view/cassandra/cassandra_column_Ui,
+  app/view/cassandra/cassandra_column_Server,
+  app/logic/tools
+)
 
-column_server <- function(id,input,output,session){
-  observeEvent(input[[glue("{id}_delete")]], {
-    removeUI(selector = glue("#{id}"))
-  })
-  
-  observeEvent(input[[glue("{id}_confirm")]],{
-    print("modal closed")
-  })
-  
-  output[[glue("{id}_outname")]] <- renderText({
-    input[[glue("{id}_name")]]
-  })
-  
-}
+#' @export
 server <- function(id) {
   moduleServer(id, function(input,output,session){
-
+    ns<-session$ns
+    print("cassandra_panel_Server start")
     my_table<-reactiveVal(NULL)
 
     observeEvent(input$new,{
-      id<-genid()
+
+      colid<-tools$genid()
+      print(paste0("newpressed ",colid))
       insertUI(
         "#variables",
          where = "beforeEnd",
-         column_ui(id,input$name),
+         cassandra_column_Ui$ui(ns(colid),input$name),
          immediate=TRUE
       )
-      column_server(id,input,output,session)
+      cassandra_column_Server$server(id=colid)
     })
   
     observeEvent(input$remove,{
@@ -63,11 +44,13 @@ server <- function(id) {
     })
   
     observeEvent(input$run, {
+      print("run selected")
       if(identical(input$nrow>0,TRUE)){
-        my_table(iris[1:input$nrow,])
+        print(input)
+        #my_table(iris[1:input$nrow,])
       }else{
-        my_table(NULL)
-        n_row(NULL)
+        #my_table(NULL)
+        #n_row(NULL)
       }
     }
     )
@@ -79,6 +62,10 @@ server <- function(id) {
         options=list(paging=TRUE,pageLength=10,searching=FALSE)
       )
     })
+    
+    
+
+  
   
 }
 

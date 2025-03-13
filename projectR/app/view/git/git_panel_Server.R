@@ -1,3 +1,10 @@
+box::use(
+  shinydashboard[dashboardHeader,dashboardSidebar,dashboardBody,dashboardPage,sidebarMenuOutput,tabItems,tabItem, renderMenu, menuItem,sidebarMenu],
+  shiny[bootstrapPage,reactiveVal, observeEvent,div, moduleServer, NS, renderUI, tags,
+        
+        uiOutput,sidebarLayout,sidebarPanel,h3,numericInput,textOutput,textInput,conditionalPanel,actionButton,icon,mainPanel],
+)
+
 server <- function(id) {
   moduleServer(
     id,

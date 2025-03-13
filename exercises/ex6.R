@@ -9,7 +9,7 @@ columnTypes <- c('ascii','bigint','blob','boolean','counter','date','decimal','d
 column_ui <- function(id,name){
 
   wellPanel(
-    id = id,
+    id = glue("{id}"),
     modalDialogUI(
       glue("{id}_modal"),
       textInput(glue("{id}_name"), "Name",value = name),
@@ -85,11 +85,11 @@ server <-function(input,output,session){
     column_server(id,input,output,session)
   })
   
-  observeEvent(input$remove,{
-    removeUI(
-      selector = glue("#{input$which}"),
-    )
-  })
+  # observeEvent(input$remove,{
+  #   removeUI(
+  #     selector = glue("#{input$which}"),
+  #   )
+  # })
   
   observeEvent(input$run, {
     if(identical(input$nrow>0,TRUE)){
