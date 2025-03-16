@@ -1,6 +1,6 @@
 box::use(
   shinydashboard[dashboardHeader,dashboardSidebar,dashboardBody,dashboardPage,sidebarMenuOutput,tabItems,tabItem, renderMenu, menuItem,sidebarMenu],
-  shiny[bootstrapPage,reactiveVal, observeEvent,div, moduleServer, NS, renderUI, tags,
+  shiny[bootstrapPage,reactiveVal, observeEvent,div, moduleServer, NS, renderUI, tags,renderText,
         
         uiOutput,sidebarLayout,sidebarPanel,h3,numericInput,textOutput,textInput,conditionalPanel,actionButton,icon,mainPanel],
 )
@@ -9,6 +9,7 @@ server <- function(id) {
   moduleServer(
     id,
     function(input,output,session){
+      print("git server start")
       #get local version
       output$localTagVersion_string_mainPanel <- renderText({paste0("local hylGS version: ",system2("git", "describe --tags", stdout = TRUE, stderr = TRUE))})
       

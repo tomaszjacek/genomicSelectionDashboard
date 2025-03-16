@@ -68,12 +68,12 @@ server <- function(id) {
 
   
   
-  observeEvent(input$tabs,{
-    if(input$tabs=="tab_git"){
-      git_panel_Server$server(id = "git",globalData)
+  #observeEvent(input$tabs,{
+  #  if(input$tabs=="tab_git"){
+      git_panel_Server$server(id = "git")
       #active_modules(c("git", active_modules()))
-    }
-  }, ignoreNULL = TRUE, ignoreInit = TRUE)
+   # }
+  #}, ignoreNULL = TRUE, ignoreInit = TRUE)
 
   
   
