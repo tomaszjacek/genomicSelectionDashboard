@@ -2,11 +2,13 @@ box::use(
   shinydashboard[dashboardHeader,dashboardSidebar,dashboardBody,dashboardPage,sidebarMenuOutput,tabItems,tabItem, renderMenu, menuItem,sidebarMenu],
   shiny[bootstrapPage,reactiveVal, observeEvent,div, moduleServer, NS, renderUI, tags, renderText,
         uiOutput,sidebarLayout,sidebarPanel,h3,numericInput,textOutput,textInput,conditionalPanel,actionButton,icon,mainPanel],
+
 )
 
 box::use(
-  app/view/cassandra/cassandra_panel_Ui,
-  app/view/cassandra/cassandra_panel_Server,
+  #app/view/cassandra/cassandra_panel_Ui,
+  #app/view/cassandra/cassandra_panel_Server,
+  app/logic/dynamicUiManagingTemplateContainer,
   app/view/git/git_panel_Ui,
   app/view/git/git_panel_Server
 )
@@ -33,7 +35,8 @@ ui <- function(id) {
     dashboardBody(
 
       tabItems(
-        tabItem(tabName = "tab_cassandra", cassandra_panel_Ui$ui(ns("cassandra_panel"))),
+        #tabItem(tabName = "tab_cassandra", cassandra_panel_Ui$ui(ns("cassandra_panel"))),
+        tabItem(tabName = "tab_cassandra",uiOutput(ns("dynamicUiManagerTemplateUI_UI"))),# dynamicUiManagingTemplateContainer$dynamicUiManagerTemplateUI$dynamicUiManagerTemplateUI_UI("dynamicUiId")),
         tabItem(tabName = "tab_git", git_panel_Ui$ui("git")
       )
 
@@ -60,12 +63,12 @@ server <- function(id) {
   
   #observeEvent(input$tabs,{
     #if(input$tabs=="tab_cassandra"){
-      cassandra_panel_Server$server(id = "cassandra_panel")
+      #cassandra_panel_Server$server(id = "cassandra_panel")
       #active_modules(c("cassandra_panel", active_modules()))
     #}
   #}, ignoreNULL = TRUE, ignoreInit = TRUE)
 
-
+  output$cassandra <- renderUI(dynamicUiManagingTemplateContainer$dynamicUiManagerTemplate$new(input, output, session,"dynamicUiId"))
   
   
   #observeEvent(input$tabs,{
