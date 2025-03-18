@@ -1,16 +1,6 @@
-box::use(
-  shinydashboard[dashboardHeader,dashboardSidebar,dashboardBody,dashboardPage,sidebarMenuOutput,tabItems,tabItem, renderMenu, menuItem,sidebarMenu],
-  shiny[bootstrapPage,reactiveVal, observeEvent,div, moduleServer, NS, renderUI, tags, insertUI,wellPanel,selectInput,renderText,validate,need,fluidPage,removeUI,
-        uiOutput,sidebarLayout,sidebarPanel,h3,numericInput,textOutput,textInput,conditionalPanel,actionButton,icon,mainPanel,callModule,
-        verbatimTextOutput],
-  shinyGizmo[modalDialogUI],
-  glue[...],
-  R6[R6Class]
-)
-box::use(
-  app/view/cassandra/cassandra_column_R6,
-  app/logic/tools
-)
+source("app/view/cassandra/cassandra_column_R6.R", local = TRUE)
+source("app/logic/tools.R", local = TRUE)
+
 
 dynamicUiManagerTemplateUI = R6Class(
   "dynamicUiManagerTemplateUI",
@@ -18,6 +8,7 @@ dynamicUiManagerTemplateUI = R6Class(
     dynamicUiManagerTemplateUI_UI= function (prefixe){
       ns<-NS(prefixe)
       tagList(
+        renderText("dynamicUiManagerTemplateUI$dynamicUiManagerTemplateUI_UI"),
         uiOutput(ns("dynamicUiManagerTemplateUI_UI"))
       )
     }
@@ -35,14 +26,11 @@ dynamicUiManagerTemplate <- R6Class(
         callModule(private$dynamicUiManagerTemplateSERVER, self$id)
         private$server(input, output, session)
     },
-    bind = function(){
-      callModule(private$module_server, private$id)
-    },
-    
+
     dynamicUiManagerTemplate_renderUI= function(){
       fluidPage(
         uiOutput(self$ns("dynamic_ui")),
-        actionButton(ns("new"), NULL, icon=icon("plus"), width="100%"),
+        actionButton(self$ns("new"), NULL, icon=icon("plus"), width="100%"),
         textOutput(self$ns("text_out")),
         renderText("aloha")
       )
@@ -51,7 +39,7 @@ dynamicUiManagerTemplate <- R6Class(
   private = list(
     #id = NULL,
     dynamicUiManagerTemplateSERVER = function(input, output, session) {
-      output$dynamicUiManagerTemplateUI_UI<- renderUI(self$dynamicUiManagerTemplate_renderUI)
+      output$dynamicUiManagerTemplateUI_UI<- renderUI(self$dynamicUiManagerTemplate_renderUI( ))
     },
     uiElementsList = list(),
     
@@ -61,10 +49,10 @@ dynamicUiManagerTemplate <- R6Class(
     
     server = function(input, output, session){
       print("dynamicUiManagerTemplateContainerServer Start")
-      ns <- session$ns
-      output$text_out <- renderText({
-        input$text_in
-      })
+      #ns <- session$ns
+      #output$text_out <- renderText({
+      #  input$text_in
+      #})
       
     }
     

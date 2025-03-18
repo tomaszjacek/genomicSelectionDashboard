@@ -1,15 +1,5 @@
-box::use(
-  shinydashboard[dashboardHeader,dashboardSidebar,dashboardBody,dashboardPage,sidebarMenuOutput,tabItems,tabItem, renderMenu, menuItem,sidebarMenu],
-  shiny[bootstrapPage,reactiveVal, observeEvent,div, moduleServer, NS, renderUI, tags, insertUI,wellPanel,selectInput,renderText,validate,need,fluidPage,removeUI,
-        uiOutput,sidebarLayout,sidebarPanel,h3,numericInput,textOutput,textInput,conditionalPanel,actionButton,icon,mainPanel,callModule,
-        verbatimTextOutput],
-  shinyGizmo[modalDialogUI],
-  glue[...],
-  R6[R6Class]
-)
-box::use(
-  app/logic/tools
-)
+source("app/logic/tools.R", local = TRUE)
+
 
 cassandraColumnUI = R6Class(
   "cassandraColumnUI",

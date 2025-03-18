@@ -36,7 +36,7 @@ ui <- function(id) {
 
       tabItems(
         #tabItem(tabName = "tab_cassandra", cassandra_panel_Ui$ui(ns("cassandra_panel"))),
-        tabItem(tabName = "tab_cassandra",uiOutput(ns("dynamicUiManagerTemplateUI_UI"))),# dynamicUiManagingTemplateContainer$dynamicUiManagerTemplateUI$dynamicUiManagerTemplateUI_UI("dynamicUiId")),
+        tabItem(tabName = "tab_cassandra",uiOutput("cassandra_panel")),# dynamicUiManagingTemplateContainer$dynamicUiManagerTemplateUI$dynamicUiManagerTemplateUI_UI("dynamicUiId")),
         tabItem(tabName = "tab_git", git_panel_Ui$ui("git")
       )
 
@@ -51,7 +51,8 @@ ui <- function(id) {
 #' @export
 server <- function(id) {
   moduleServer(id, function(input, output, session) {
-    
+    serverCassandraPanel<-dynamicUiManagingTemplateContainer$dynamicUiManagerTemplate$new(input, output, session,"dynamicUiId")
+    uiCassandraPanel<-dynamicUiManagingTemplateContainer$dynamicUiManagerTemplateUI$new()
     #ns <- session$ns
     
   # Function to load settings from file
@@ -68,7 +69,7 @@ server <- function(id) {
     #}
   #}, ignoreNULL = TRUE, ignoreInit = TRUE)
 
-  output$cassandra <- renderUI(dynamicUiManagingTemplateContainer$dynamicUiManagerTemplate$new(input, output, session,"dynamicUiId"))
+  output$cassandra_panel <- renderUI(uiCassandraPanel$dynamicUiManagerTemplateUI_UI("dynamicUiId"))
   
   
   #observeEvent(input$tabs,{
