@@ -1,3 +1,4 @@
+library(purrr)
 source("app/view/cassandra/cassandra_column_R6.R", local = TRUE)
 source("app/logic/tools.R", local = TRUE)
 
@@ -19,13 +20,16 @@ dynamicUiManagerTemplate <- R6Class(
   public = list(
       id = NULL,
       ns =NULL,
+      nestedUiTrigger = NULL,
       uiElementsList = NULL,
       initialize = function(input,output, session,id){
         self$uiElementsList = list()
+        self$nestedUiTrigger = counter$new(reactive = TRUE)
         self$id = id
+        #self$ns = NS(session$ns(id))
         self$ns = NS(session$ns(id))
-        callModule(private$dynamicUiManagerTemplateSERVER, self$id)
-        private$server(input, output, session)
+        callModule(self$dynamicUiManagerTemplateSERVER, self$id)
+        self$server(input, output, session)
     },
 
     dynamicUiManagerTemplate_renderUI= function(){
@@ -36,9 +40,9 @@ dynamicUiManagerTemplate <- R6Class(
         textOutput("gen_by"),
         #renderText("aloha")
       )
-    }
-  ),
-  private = list(
+    },
+  #),
+  #self = list(
     #id = NULL,
     dynamicUiManagerTemplateSERVER = function(input, output, session) {
       print(paste0("ns in object ",self$ns("a")))
@@ -56,10 +60,13 @@ dynamicUiManagerTemplate <- R6Class(
     },    
     scatter_ui_objects = function(){
       objNames <- self$get_obj_names()
-      content <-NULL
+      #print(paste0("names in uiElementsList", objNames))
+      content <- vector()
       for (n in 1:length(objNames)){
         name <- objNames[n]
-        content <- content + self$uiElementsList[[name]][["ui"]]()
+        #print(paste0("scatter_ui_object",name))
+        content <- append(content,self$uiElementsList[[name]][["ui"]]( ))
+        #self$uiElementsList[[name]][["ui"]]
       }
       return(content)
     },
@@ -74,14 +81,21 @@ dynamicUiManagerTemplate <- R6Class(
       #})
       output$gen_by <- renderText("hello")
       
-      output$dynamic_ui <- renderUI({
+      observeEvent(input$new,{
         print("button new pressed")
-        uid <- shiny:::createUniqueId()
+        print(paste0("prefixtest0 ",self$ns("test")))
+        uid <- genid()
         print(paste0("typeof ",typeof(uid)))
-        newUiElementObject <- cassandraColumn$new(input, output, session, uid)
+        newUiElementObject <- cassandraColumn$new(input, output, session, uid, self$nestedUiTrigger)
         self$uiElementsList[[uid]] <- newUiElementObject
-        self$scatter_ui_objects()
-      }) |> bindEvent(input$new)
+
+        output$dynamic_ui <- renderUI({
+          #newUiElementObject$ui()
+          self$scatter_ui_objects( )
+        })
+        
+        self$nestedUiTrigger$setIncrement( )
+      })
       
       
     }

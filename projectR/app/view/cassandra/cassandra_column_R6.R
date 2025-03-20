@@ -1,17 +1,17 @@
 source("app/logic/tools.R", local = TRUE)
 
 
-cassandraColumnUI = R6Class(
-  "cassandraColumnUI",
-  public = list(
-    cassandraColumnUI_UI= function (prefixe){
-      ns<-NS(prefixe)
-      tagList(
-        uiOutput(ns("cassandraColumnUI_UI"))
-      )
-    }
-  )
-)
+# cassandraColumnUI = R6Class(
+#   "cassandraColumnUI",
+#   public = list(
+#     cassandraColumnUI_UI= function (prefixe){
+#       ns<-NS(prefixe)
+#       tagList(
+#         uiOutput(ns("cassandraColumnUI_UI"))
+#       )
+#     }
+#   )
+# )
 
 cassandraColumn <- R6Class(
   "cassandraColumn",
@@ -19,15 +19,17 @@ cassandraColumn <- R6Class(
     id = NULL,
     ns =NULL,
     parameterValues = NULL,
+    uiReloadTrigger = NULL,
     
-    initialize = function(input,output, session,id){
+    initialize = function(input,output, session,id, t){
       self$parameterValues=list()
       self$id = id
       self$ns = NS(session$ns(id))
-      private$parameterValues[["cassandraTableColumnType"]]<-NULL
-      private$parameterValues[["cassandraTableColumnName"]]<-NULL
-      callModule(private$cassandraColumnSERVER, self$id)
-      private$server(input, output, session)
+      self$parameterValues[["cassandraTableColumnType"]]<-NULL
+      self$parameterValues[["cassandraTableColumnName"]]<-NULL
+      self$uiReloadTrigger <- t
+      callModule(self$cassandraColumnSERVER, self$id)
+      callModule(self$server, self$id)
     },
     ui = function (){
       tagList(
@@ -43,18 +45,19 @@ cassandraColumn <- R6Class(
 
     cassandraColumn_renderUI= function(){
       fluidPage(
-        textInput(self$ns("cassandraTableColumnName"), "Column Name",value = name),
+        textInput(self$ns("cassandraTableColumnName"), "Column Name",value = ""),
         selectInput(
-          ns("cassandraTableColumnType"),
+          self$ns("cassandraTableColumnType"),
           label="Column Type",
-          choices=tools$cassandraColumnTypes
+          choices=cassandraColumnTypes
         ),
         textOutput(self$ns("outname"), inline =TRUE),
-        textOutput(self$ns("outtype"), inline =TRUE)
+        textOutput(self$ns("outtype"), inline =TRUE),
+        renderText(paste0("prefixtest1 ",self$ns("test")," | ",self$ns(self$id)))
       )
-    }
-  ),
-  private = list(
+    },
+  #),
+  #private = list(
     
     #id = NULL,
     
@@ -65,24 +68,43 @@ cassandraColumn <- R6Class(
     },
 
     server = function(input, output, session){
+      #ns<-session$ns
+      #nss<-session$ns
       print("cassandra column server start")
+      print(paste0("prefixtest2 self$ns(test) ",self$ns("test")))
+      print(paste0("prefixtest2 self$id ",self$id))
+            
       output$outname <- renderText({
         input$cassandraTableColumnName
       })  
       
       output$outtype <- renderText({
-        input$cassandraTableColumnName
+        input$cassandraTableColumnType
       })  
-    
+      output$nsid <- renderText({
+        renderText(paste0("prefixtest2 ",self$ns("test")))
+      })  
+      
       observeEvent(input[["cassandraTableColumnType"]],{
         print(paste0("column type ",input[["cassandraTableColumnType"]]))
-        private$parameterValues[["cassandraTableColumnType"]]<-input[["cassandraTableColumnType"]]
+        self$parameterValues[["cassandraTableColumnType"]]<-input[["cassandraTableColumnType"]]
       })
+
 
       observeEvent(input[["cassandraTableColumnName"]],{
         print(paste0("column type ",input[["cassandraTableColumnName"]]))
-        private$parameterValues[["cassandraTableColumnName"]]<-input[["cassandraTableColumnName"]]
+        self$parameterValues[["cassandraTableColumnName"]]<-input[["cassandraTableColumnName"]]
       })
+      
+      # observeEvent(self$uiReloadTrigger,{
+      #   output$outname <- renderText({
+      #     self$parameterValues[["cassandraTableColumnName"]]
+      #   })  
+      #   
+      #   output$outtype <- renderText({
+      #     self$parameterValues[["cassandraTableColumnType"]]
+      #   })  
+      # })
       
     }
 
